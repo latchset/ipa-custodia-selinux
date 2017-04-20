@@ -14,6 +14,9 @@ permissive ipa_custodia_t;
 type ipa_custodia_etc_rw_t;
 files_type(ipa_custodia_etc_rw_t)
 
+type ipa_custodia_tmp_t;
+files_tmp_file(ipa_custodia_tmp_t)
+
 ########################################
 #
 # ipa_custodia local policy
@@ -26,8 +29,31 @@ manage_files_pattern(ipa_custodia_t, ipa_custodia_etc_rw_t, ipa_custodia_etc_rw_
 manage_lnk_files_pattern(ipa_custodia_t, ipa_custodia_etc_rw_t, ipa_custodia_etc_rw_t)
 files_etc_filetrans(ipa_custodia_t, ipa_custodia_etc_rw_t, { dir file lnk_file })
 
-domain_use_interactive_fds(ipa_custodia_t)
+manage_dirs_pattern(ipa_custodia_t, ipa_custodia_tmp_t, ipa_custodia_tmp_t)
+manage_files_pattern(ipa_custodia_t, ipa_custodia_tmp_t, ipa_custodia_tmp_t)
+files_tmp_filetrans(ipa_custodia_t, ipa_custodia_tmp_t, { dir file })
 
-files_read_etc_files(ipa_custodia_t)
+kernel_read_network_state(ipa_custodia_t)
 
-miscfiles_read_localization(ipa_custodia_t)
+auth_read_passwd(ipa_custodia_t)
+
+corecmd_exec_bin(ipa_custodia_t)
+
+dev_list_sysfs(ipa_custodia_t)
+dev_read_rand(ipa_custodia_t)
+
+ipa_read_lib(ipa_custodia_t)
+
+ipa_custodia_manage_httpd_sockets(ipa_custodia_t)
+
+miscfiles_read_generic_certs(ipa_custodia_t)
+
+sysnet_read_config(ipa_custodia_t)
+
+optional_policy(`
+    dirsrv_stream_connect(ipa_custodia_t)
+')
+
+optional_policy(`
+    pki_rw_tomcat_cert(ipa_custodia_t)
+')

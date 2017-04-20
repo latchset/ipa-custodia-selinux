@@ -82,6 +82,14 @@ If you want to deny any process from ptracing or debugging any other processes, 
 .EE
 
 .PP
+If you want to allow all domains write to kmsg_device, while kernel is executed with systemd.log_target=kmsg parameter, you must turn on the domain_can_write_kmsg boolean. Disabled by default.
+
+.EX
+.B setsebool -P domain_can_write_kmsg 1
+
+.EE
+
+.PP
 If you want to allow all domains to use other domains file descriptors, you must turn on the domain_fd_use boolean. Enabled by default.
 
 .EX
@@ -176,6 +184,28 @@ The SELinux process type ipa_custodia_t can manage files labeled with the follow
 .br
 
 .br
+.B ipa_custodia_tmp_t
+
+
+.br
+.B pki_tomcat_cert_t
+
+	/var/lib/pki-ca/alias(/.*)?
+.br
+	/etc/pki/pki-tomcat/ca(/.*)?
+.br
+	/var/lib/pki-kra/alias(/.*)?
+.br
+	/var/lib/pki-tks/alias(/.*)?
+.br
+	/var/lib/pki-ocsp/alias(/.*)?
+.br
+	/etc/pki/pki-tomcat/alias(/.*)?
+.br
+	/var/lib/ipa/pki-ca/publish(/.*)?
+.br
+
+.br
 .B root_t
 
 	/
@@ -198,7 +228,7 @@ SELinux ipa_custodia policy is very flexible allowing users to setup their ipa_c
 SELinux defines the file context types for the ipa_custodia, if you wanted to
 store files with these types in a diffent paths, you need to execute the semanage command to sepecify alternate labeling and then use restorecon to put the labels on disk.
 
-.B semanage fcontext -a -t ipa_custodia_etc_rw_t '/srv/myipa_custodia_content(/.*)?'
+.B semanage fcontext -a -t ipa_custodia_tmp_t '/srv/myipa_custodia_content(/.*)?'
 .br
 .B restorecon -R -v /srv/myipa_custodia_content
 
@@ -221,6 +251,14 @@ Note: SELinux often uses regular expressions to specify labels that match multip
 .EE
 
 - Set files with the ipa_custodia_exec_t type, if you want to transition an executable to the ipa_custodia_t domain.
+
+
+.EX
+.PP
+.B ipa_custodia_tmp_t
+.EE
+
+- Set files with the ipa_custodia_tmp_t type, if you want to store ipa custodia temporary files in the /tmp directories.
 
 
 .PP

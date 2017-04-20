@@ -135,3 +135,22 @@ interface(`ipa_custodia_admin',`
 		systemd_read_fifo_file_passwd_run($1)
 	')
 ')
+
+########################################
+## <summary>
+##	Create a named socket in a httpd_var_run_t directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`ipa_custodia_manage_httpd_sockets',`
+	gen_require(`
+		type httpd_var_run_t;
+	')
+
+	manage_sock_files_pattern($1, httpd_var_run_t, httpd_var_run_t)
+	manage_dirs_pattern($1, httpd_var_run_t, httpd_var_run_t)
+')
