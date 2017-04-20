@@ -1,0 +1,3 @@
+/etc/ipa/custodia(/.*)?		gen_context(system_u:object_r:ipa_custodia_etc_rw_t,s0)
+
+/usr/libexec/ipa/ipa-custodia		--	gen_context(system_u:object_r:ipa_custodia_exec_t,s0)
