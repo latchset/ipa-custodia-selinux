@@ -14,6 +14,9 @@ permissive ipa_custodia_t;
 type ipa_custodia_etc_rw_t;
 files_type(ipa_custodia_etc_rw_t)
 
+type ipa_custodia_log_t;
+logging_log_file(ipa_custodia_log_t)
+
 type ipa_custodia_tmp_t;
 files_tmp_file(ipa_custodia_tmp_t)
 
@@ -23,17 +26,23 @@ files_tmp_file(ipa_custodia_tmp_t)
 #
 allow ipa_custodia_t self:fifo_file rw_fifo_file_perms;
 allow ipa_custodia_t self:unix_stream_socket create_stream_socket_perms;
+allow ipa_custodia_t self:unix_dgram_socket create_socket_perms;
 
 manage_dirs_pattern(ipa_custodia_t, ipa_custodia_etc_rw_t, ipa_custodia_etc_rw_t)
 manage_files_pattern(ipa_custodia_t, ipa_custodia_etc_rw_t, ipa_custodia_etc_rw_t)
 manage_lnk_files_pattern(ipa_custodia_t, ipa_custodia_etc_rw_t, ipa_custodia_etc_rw_t)
 files_etc_filetrans(ipa_custodia_t, ipa_custodia_etc_rw_t, { dir file lnk_file })
 
+manage_files_pattern(ipa_custodia_t, ipa_custodia_log_t, ipa_custodia_log_t)
+logging_log_filetrans(ipa_custodia_t, ipa_custodia_log_t, file)
+
 manage_dirs_pattern(ipa_custodia_t, ipa_custodia_tmp_t, ipa_custodia_tmp_t)
 manage_files_pattern(ipa_custodia_t, ipa_custodia_tmp_t, ipa_custodia_tmp_t)
 files_tmp_filetrans(ipa_custodia_t, ipa_custodia_tmp_t, { dir file })
 
 kernel_read_network_state(ipa_custodia_t)
+kernel_read_system_state(ipa_custodia_t)
+kernel_dgram_send(ipa_custodia_t)
 
 auth_read_passwd(ipa_custodia_t)
 
