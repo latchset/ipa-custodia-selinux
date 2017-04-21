@@ -24,9 +24,12 @@ files_tmp_file(ipa_custodia_tmp_t)
 #
 # ipa_custodia local policy
 #
+allow ipa_custodia_t self:capability net_admin;
+allow ipa_custodia_t self:process execmem;
 allow ipa_custodia_t self:fifo_file rw_fifo_file_perms;
 allow ipa_custodia_t self:unix_stream_socket create_stream_socket_perms;
 allow ipa_custodia_t self:unix_dgram_socket create_socket_perms;
+allow ipa_custodia_t self:tcp_socket { bind create_socket_perms };
 
 manage_dirs_pattern(ipa_custodia_t, ipa_custodia_etc_rw_t, ipa_custodia_etc_rw_t)
 manage_files_pattern(ipa_custodia_t, ipa_custodia_etc_rw_t, ipa_custodia_etc_rw_t)
@@ -48,12 +51,19 @@ auth_read_passwd(ipa_custodia_t)
 
 corecmd_exec_bin(ipa_custodia_t)
 
+corenet_tcp_bind_generic_node(ipa_custodia_t)
+
 dev_list_sysfs(ipa_custodia_t)
 dev_read_rand(ipa_custodia_t)
 
 ipa_read_lib(ipa_custodia_t)
 
 ipa_custodia_manage_httpd_sockets(ipa_custodia_t)
+ipa_custodia_read_tomcat_etc_rw(ipa_custodia_t)
+ipa_custodia_httpd_stream_connect(ipa_custodia_t)
+ipa_custodia_read_state_httpd(ipa_custodia_t)
+
+libs_exec_ldconfig(ipa_custodia_t)
 
 miscfiles_read_generic_certs(ipa_custodia_t)
 
@@ -65,4 +75,9 @@ optional_policy(`
 
 optional_policy(`
     pki_rw_tomcat_cert(ipa_custodia_t)
+')
+
+optional_policy(`
+    sssd_stream_connect(ipa_custodia_t)
+    sssd_read_public_files(ipa_custodia_t)
 ')

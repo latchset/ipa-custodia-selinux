@@ -154,3 +154,60 @@ interface(`ipa_custodia_manage_httpd_sockets',`
 	manage_sock_files_pattern($1, httpd_var_run_t, httpd_var_run_t)
 	manage_dirs_pattern($1, httpd_var_run_t, httpd_var_run_t)
 ')
+
+########################################
+## <summary>
+##      Allow read pki tomcat etc files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`ipa_custodia_read_tomcat_etc_rw',`
+        gen_require(`
+				type pki_tomcat_etc_rw_t;
+        ')
+
+        read_files_pattern($1, pki_tomcat_etc_rw_t, pki_tomcat_etc_rw_t)
+        list_dirs_pattern($1, pki_tomcat_etc_rw_t, pki_tomcat_etc_rw_t)
+')
+
+########################################
+## <summary>
+##	Connect to httpd over an unix
+##	stream socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`ipa_custodia_httpd_stream_connect',`
+	gen_require(`
+		type httpd_t;
+	')
+
+allow httpd_t $1:unix_stream_socket connectto;
+')
+
+#######################################
+## <summary>
+##      Read httpd state files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`ipa_custodia_read_state_httpd',`
+        gen_require(`
+                type httpd_t;
+        ')
+
+        kernel_search_proc($1)
+        ps_process_pattern($1, httpd_t)
+')
