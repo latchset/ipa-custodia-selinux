@@ -195,7 +195,7 @@ allow httpd_t $1:unix_stream_socket connectto;
 
 #######################################
 ## <summary>
-##      Read clamd state files.
+##      Read httpd state files.
 ## </summary>
 ## <param name="domain">
 ##      <summary>
