@@ -9,14 +9,19 @@
 %global modulename ipa_custodia
 
 Name: ipa-custodia-selinux
-Version: 1.0
+Version: 0.1.0
 Release: 1%{?dist}
 License: GPLv3
 URL: https://github.com/latchset/ipa-custodia-selinux
 Summary: SELinux policies for FreeIPA's ipa-custodia
-Source0: https://github.com/latchset/ipa-custodia-selinux/archive/master.tar.gz
+Source0: https://github.com/latchset/ipa-custodia-selinux/archive/v0.1.0.tar.gz
 BuildArch: noarch
 Requires: selinux-policy >= %{selinux_policyver}
+%if 0%{?fedora}
+Requires: freeipa-server >= 4.5.0
+%else
+Requires: ipa-server >= 4.5.0
+%endif
 BuildRequires: git
 BuildRequires: pkgconfig(systemd)
 BuildRequires: selinux-policy
@@ -37,7 +42,7 @@ Requires(post): policycoreutils-python
 SELinux policy modules for FreeIPA's ipa-custodia
 
 %prep
-%setup -q -n %{name}-master
+%setup -q
 
 %build
 make
@@ -51,11 +56,14 @@ install -d %{buildroot}%{_datadir}/selinux/packages
 install -d -p %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
 install -p -m 644 %{modulename}.if %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
 install -m 0644 %{modulename}.pp.bz2 %{buildroot}%{_datadir}/selinux/packages
+install -d %{buildroot}%{_libexecdir}/ipa
+install -m 0755 fixperm.sh %{buildroot}%{_libexecdir}/ipa/ipa-custodia-fixperm.sh
 
 %check
 
 %post
 %selinux_modules_install -s %{selinuxtype} %{_datadir}/selinux/packages/%{modulename}.pp.bz2
+ %{_libexecdir}/ipa/ipa-custodia-fixperm.sh
 
 %postun
 
@@ -70,8 +78,9 @@ fi
 %defattr(-,root,root,0755)
 %attr(0644,root,root) %{_datadir}/selinux/packages/%{modulename}.pp.bz2
 %attr(0644,root,root) %{_datadir}/selinux/devel/include/%{moduletype}/%{modulename}.if
+%attr(0755,root,root) %{_libexecdir}/ipa/ipa-custodia-fixperm.sh
 
 %changelog
-* Thu Apr 20 2017 Christian Heimes <cheimes@redhat.com> - 0.1.0-1
+* Mon Apr 24 2017 Christian Heimes <cheimes@redhat.com> - 0.1.0-1
 - First Build
 
