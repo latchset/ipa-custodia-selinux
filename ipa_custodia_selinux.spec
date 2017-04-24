@@ -1,6 +1,10 @@
 # defining macros needed by SELinux
 %global selinuxtype targeted
+%if 0%{?fedora}
 %global selinux_policyver 3.13.1-225
+%else
+%global selinux_policyver 3.13.1-144
+%endif
 %global moduletype contrib
 %global modulename ipa_custodia
 
@@ -17,6 +21,7 @@ BuildRequires: git
 BuildRequires: pkgconfig(systemd)
 BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
+BuildRequires: bzip2
 Requires(post): selinux-policy-base >= %{selinux_policyver}
 Requires(post): libselinux-utils
 Requires(post): policycoreutils

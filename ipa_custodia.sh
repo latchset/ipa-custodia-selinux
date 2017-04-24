@@ -48,6 +48,8 @@ sepolicy manpage -p . -d ipa_custodia_t
 /sbin/restorecon -F -R -v /usr/libexec/ipa/ipa-custodia
 # Fixing the file context on /etc/ipa/custodia
 /sbin/restorecon -F -R -v /etc/ipa/custodia
+# Fixing the file context on /var/log/ipa-custodia.audit.log
+/sbin/restorecon -F -R -v /var/log/ipa-custodia.audit.log
 # Generate a rpm package for the newly generated policy
 
 pwd=$(pwd)
