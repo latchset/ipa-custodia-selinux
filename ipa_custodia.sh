@@ -45,11 +45,15 @@ make -f /usr/share/selinux/devel/Makefile ipa_custodia.pp || exit
 # Generate a man page off the installed module
 sepolicy manpage -p . -d ipa_custodia_t
 # Fixing the file context on /usr/libexec/ipa/ipa-custodia
-/sbin/restorecon -F -R -v /usr/libexec/ipa/ipa-custodia
+/sbin/restorecon -F -v /usr/libexec/ipa/ipa-custodia
 # Fixing the file context on /etc/ipa/custodia
-/sbin/restorecon -F -R -v /etc/ipa/custodia
+if [ -d /etc/ipa/custodia ]; then
+    /sbin/restorecon -F -R -v /etc/ipa/custodia
+fi
 # Fixing the file context on /var/log/ipa-custodia.audit.log
-/sbin/restorecon -F -R -v /var/log/ipa-custodia.audit.log
+if [ -f /var/log/ipa-custodia.audit.log ]; then
+    /sbin/restorecon -F -v /var/log/ipa-custodia.audit.log
+fi
 # Generate a rpm package for the newly generated policy
 
 pwd=$(pwd)

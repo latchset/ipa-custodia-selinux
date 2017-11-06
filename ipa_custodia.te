@@ -1,4 +1,4 @@
-policy_module(ipa_custodia, 1.0.0)
+policy_module(ipa_custodia, 0.1.1)
 
 ########################################
 #
@@ -24,7 +24,9 @@ files_tmp_file(ipa_custodia_tmp_t)
 #
 # ipa_custodia local policy
 #
-allow ipa_custodia_t self:capability net_admin;
+
+# DAC_OVERRIDE to read Dogtag's key material
+allow ipa_custodia_t self:capability {net_admin dac_override};
 allow ipa_custodia_t self:process execmem;
 allow ipa_custodia_t self:fifo_file rw_fifo_file_perms;
 allow ipa_custodia_t self:unix_stream_socket create_stream_socket_perms;

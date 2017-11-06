@@ -9,12 +9,12 @@
 %global modulename ipa_custodia
 
 Name: ipa-custodia-selinux
-Version: 0.1.0
+Version: 0.1.1
 Release: 1%{?dist}
 License: GPLv3
 URL: https://github.com/latchset/ipa-custodia-selinux
 Summary: SELinux policies for FreeIPA's ipa-custodia
-Source0: https://github.com/latchset/ipa-custodia-selinux/archive/v0.1.0.tar.gz
+Source0: https://github.com/latchset/ipa-custodia-selinux/archive/v0.1.1.tar.gz
 BuildArch: noarch
 Requires: selinux-policy >= %{selinux_policyver}
 %if 0%{?fedora}
@@ -57,16 +57,23 @@ install -d -p %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
 install -p -m 644 %{modulename}.if %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
 install -m 0644 %{modulename}.pp.bz2 %{buildroot}%{_datadir}/selinux/packages
 install -d %{buildroot}%{_libexecdir}/ipa
-install -m 0755 fixperm.sh %{buildroot}%{_libexecdir}/ipa/ipa-custodia-fixperm.sh
 
 %check
 
 %post
 %selinux_modules_install -s %{selinuxtype} %{_datadir}/selinux/packages/%{modulename}.pp.bz2
- %{_libexecdir}/ipa/ipa-custodia-fixperm.sh
+# Fixing the file context on /usr/libexec/ipa/ipa-custodia
+/sbin/restorecon -F -v /usr/libexec/ipa/ipa-custodia
+# Fixing the file context on /etc/ipa/custodia
+if [ -d /etc/ipa/custodia ]; then
+    /sbin/restorecon -F -R -v /etc/ipa/custodia
+fi
+# Fixing the file context on /var/log/ipa-custodia.audit.log
+if [ -f /var/log/ipa-custodia.audit.log ]; then
+    /sbin/restorecon -F -v /var/log/ipa-custodia.audit.log
+fi
 
 %postun
-
 if [ $1 -eq 0 ]; then
     %selinux_modules_uninstall -s %{selinuxtype} %{modulename}
 fi
@@ -78,9 +85,10 @@ fi
 %defattr(-,root,root,0755)
 %attr(0644,root,root) %{_datadir}/selinux/packages/%{modulename}.pp.bz2
 %attr(0644,root,root) %{_datadir}/selinux/devel/include/%{moduletype}/%{modulename}.if
-%attr(0755,root,root) %{_libexecdir}/ipa/ipa-custodia-fixperm.sh
 
 %changelog
+* Mon Nov 06 2017 Christian Heimes <cheimes@redhat.com> - 0.1.1-1
+- Use DAC_OVERRIDE instead of changing Dogtag's file permissions
+
 * Mon Apr 24 2017 Christian Heimes <cheimes@redhat.com> - 0.1.0-1
 - First Build
-
