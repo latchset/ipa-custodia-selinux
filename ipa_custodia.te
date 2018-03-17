@@ -26,6 +26,7 @@ files_tmp_file(ipa_custodia_tmp_t)
 #
 
 allow ipa_custodia_t self:capability { net_admin dac_read_search };
+dontaudit ipa_custodia_t self:capability dac_override;
 allow ipa_custodia_t self:process execmem;
 allow ipa_custodia_t self:fifo_file rw_fifo_file_perms;
 allow ipa_custodia_t self:unix_stream_socket create_stream_socket_perms;
